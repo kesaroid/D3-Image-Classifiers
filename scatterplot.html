@@ -1,0 +1,163 @@
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: grey;
+            color: black;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">Data Visualization</a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li ><a href="confusion.html" >CNN</a></li>
+                <li class="active"><a href="scatterplot.html" onclick="selected('scatterplot')">Fisher</a></li> 
+                <li><a href="matrix.html" onclick="selected('matrix')">Decision Tree</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div id="myDiv" style="width:100%;height:100%"></div>
+    <div class="modal fade" id="server_msg_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title" id= "tits" style="margin: 0 auto;"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" id="modelbody">
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="footer">
+        <h4> @Authors : Kesar TN, Pranav Bhasin, Abraham Jose</h4>
+    </div>
+    <script>
+        Plotly.d3.csv('formated.csv', function(err, rows){
+            function unpack(rows, key) {
+                return rows.map(function(row) 
+                                { return row[key]; });
+            }
+
+            var ccolors = ['red','orange','yellow','blue','purple','green','pink','indigo','violet','brown'];
+            var cclass = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck'];
+            var data = [];
+            var imageData = null;
+            $.ajax({
+                dataType:"json",
+                url:"fisher.json",
+                async:false,
+                success:function(data){
+                    imgData=data;
+                }
+            });
+
+            for(var i=0;i<10;i++){
+
+                var trace = {
+                    x:unpack(rows, i+'actualLDF1'),  y: unpack(rows, i+'actualLDF2'), z: unpack(rows, i+'actualLDF3'), 
+                    mode: 'markers',
+                    marker: {
+                        size: 12,
+                        color: ccolors[i],
+                        line: {
+                            color: 'rgba(217, 217, 217, 0.14)',
+                            width: 0.5
+                        },
+                        opacity: 0.8
+                    },
+                    type: 'scatter3d',
+                    name: cclass[i]+" actual"
+                };
+
+
+                var trace1 = {
+                    x:unpack(rows, i+'predictedLDF1'),  y: unpack(rows, i+'predictedLDF2'), z: unpack(rows, i+'predictedLDF3'), 
+                    mode: 'markers',
+                    marker: {
+                        size: 12,
+                        color:  ccolors[i]+"dark",
+                        line: {
+                            color: 'rgba(217, 217, 217, 0.14)',
+                            width: 0.5
+                        },
+                        opacity: 0.8
+                    },
+                    type: 'scatter3d',
+                    name: cclass[i]+" predicted"
+                };
+
+                data.push(trace);
+                data.push(trace1);
+
+            }
+
+
+            var layout = {
+                dragmode: true,
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 0
+                }};
+            Plotly.newPlot('myDiv', data, layout);
+            var myPlot = document.getElementById('myDiv');
+            myPlot.on('plotly_click', function(data){
+                console.log(data.points[0].x);
+                console.log(data.points[0].y);
+                console.log(data.points[0].z);
+
+                for(var i =0;i<imgData.length;i++){
+
+                    if(imgData[i].LDF1 == parseInt(data.points[0].x) && imgData[i].LDF2 == parseInt(data.points[0].y) && imgData[i].LDF3 == parseInt(data.points[0].z)){
+                        openImage(imgData[i].image_id,imgData[i].actual,imgData[i].predicted);
+                    }
+                }   
+            });
+            function openImage(img,actual,predicted){
+
+                var modalTitle = document.getElementById("tits");
+                modalTitle.innerHTML = "<p style='text-align:left;'> Fisher feature actual class : "+ cclass[actual] +"<br> predicted class :"+cclass[predicted]+"</p>";
+
+                var modelBody = document.getElementById('matrixul');
+                if(modelBody == null){
+                    console.log("first node");
+                }else{
+
+                    modelBody.parentNode.removeChild(modelBody);
+                    console.log("child deleted")
+                }
+                var ul = document.createElement('ul');
+                ul.setAttribute("id","matrixul");
+                document.getElementById('modelbody').appendChild(ul);
+                var li = document.createElement('li');
+                ul.appendChild(li);
+                li.innerHTML+="<img  style='height:100px;width:100px;' src =/images/"+img+">";
+
+                $('#server_msg_modal').modal('show');
+
+            }
+        });
+
+
+
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</body>
+
+

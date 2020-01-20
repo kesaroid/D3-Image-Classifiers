@@ -1,0 +1,59 @@
+{
+  "name": "pca_y > 0.5257612466812134",
+  "children": [
+    {
+      "name": "pca_x > 0.5682719945907593",
+      "children": [
+        {
+          "name": "pca_x > 0.7083089053630829",
+          "children": [
+            {
+              "name": "222 of airplane, 358 of automobile, 98 of bird, 271 of cat, 76 of deer, 163 of dog, 255 of frog, 123 of horse, 174 of ship, 393 of truck"
+            },
+            {
+              "name": "1894 of airplane, 238 of automobile, 1016 of bird, 594 of cat, 456 of deer, 543 of dog, 340 of frog, 580 of horse, 721 of ship, 289 of truck"
+            }
+          ]
+        },
+        {
+          "name": "pca_x > 0.8436868786811829",
+          "children": [
+            {
+              "name": "364 of airplane, 520 of automobile, 203 of bird, 640 of cat, 195 of deer, 1116 of dog, 359 of frog, 441 of horse, 700 of ship, 216 of truck"
+            },
+            {
+              "name": "1059 of airplane, 1701 of automobile, 2823 of bird, 2593 of cat, 3484 of deer, 2500 of dog, 3177 of frog, 2592 of horse, 750 of ship, 1049 of truck"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pca_x > 0.0910145714879036",
+      "children": [
+        {
+          "name": "pca_x > 0.19419755041599274",
+          "children": [
+            {
+              "name": "356 of airplane, 411 of automobile, 172 of bird, 201 of cat, 149 of deer, 214 of dog, 227 of frog, 147 of horse, 1460 of ship, 510 of truck"
+            },
+            {
+              "name": "582 of airplane, 695 of automobile, 123 of bird, 78 of cat, 103 of deer, 91 of dog, 34 of frog, 174 of horse, 515 of ship, 546 of truck"
+            }
+          ]
+        },
+        {
+          "name": "pca_x > 0.4639134854078293",
+          "children": [
+            {
+              "name": "92 of airplane, 522 of automobile, 58 of bird, 127 of cat, 53 of deer, 70 of dog, 92 of frog, 165 of horse, 133 of ship, 966 of truck"
+            },
+            {
+              "name": "431 of airplane, 555 of automobile, 507 of bird, 496 of cat, 484 of deer, 303 of dog, 516 of frog, 778 of horse, 547 of ship, 1031 of truck"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
