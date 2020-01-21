@@ -1,0 +1,178 @@
+
+<head>
+<!--   CDN Links-->
+    <script type="text/javascript" src="https://unpkg.com/vis-graph3d@latest/dist/vis-graph3d.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: grey;
+            color: black;
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        var data = null;
+        var graph = null;
+        var imgData = null;
+        var cclass = ['airplane','automobile','bird','cat','deer','dog','frog','horse','ship','truck'];
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create and populate a data table.
+            var data = new vis.DataSet();
+            var cdata;
+            $.ajax({
+                dataType:"json",
+                url:"confusion.json",
+                async: false,
+                success:function(data){
+                    cdata=data;
+
+                }
+            });
+
+
+            $.ajax({
+                dataType:"json",
+                url:"out.json",
+                async:false,
+                success:function(data){
+                    imgData=data;
+                }
+            });
+
+            var steps = 10;  // number of datapoints will be steps*steps
+            var axisMax = 10;
+            var axisStep = axisMax / steps;
+            for (var x = 0; x < axisMax; x+=axisStep) {
+                for (var y = 0; y < axisMax; y+=axisStep) {
+                    data.add({
+                        x: x,
+                        y: y,
+                        z: cdata[x][cclass[y]]/2,
+                        style: cdata[x][cclass[y]]/2,
+
+                    });
+                }
+            }
+
+
+            // specify options
+            var options = {
+                width:  '90%',
+                height: '100%',
+                style: 'bar-color',
+                showPerspective: false,
+                showGrid: false,
+                showShadow: false,
+                keepAspectRatio: false,
+                xValueLabel: function(x){
+                    return cclass[x];
+                },
+                yValueLabel: function(x){
+                    return cclass[x];
+                },
+                rotateAxisLabels : true,
+                showZAxis: false,
+                xMin:0,
+                yMin:0,
+                zMin:0,
+                xMax : 9,
+                yMax:9,
+                zMax:50,
+                xStep:1,
+                yStep:1,
+                zStep:20,
+
+                tooltip: function(x,y,z,data){
+                    return "class1:  "+cclass[x.data.x]+"<br> class2:"+cclass[x.data.y]+ "<br>value:"+x.data.z
+                },
+                onclick: function(event){
+                    showmodal(event.x,event.y);
+                }
+            };
+
+            // create a graph3d
+            var container = document.getElementById('mygraph');
+            graph3d = new vis.Graph3d(container, data, options);
+
+        }
+        function showmodal(x,y){
+
+            var modalTitle = document.getElementById("tits");
+            modalTitle.innerHTML = "<p style='text-align:center;'> Images resulting in matrix cell </br>"+cclass[y]+" v/s "+cclass[x]+"</p>";
+
+            var modelBody = document.getElementById('matrixul');
+            if(modelBody == null){
+                console.log("first node");
+            }else{
+
+                modelBody.parentNode.removeChild(modelBody);
+                console.log("child deleted")
+            }
+
+            var filteresImage = [];
+            var count = Object.keys(imgData).length;
+            for(var i =0;i<count;i++){
+                if(imgData[i].y_pred == x && imgData[i].y_actual == y){
+                    filteresImage.push(imgData[i]);
+                }
+            }
+            var ul = document.createElement('ul');
+            ul.setAttribute("id","matrixul");
+            document.getElementById('modelbody').appendChild(ul);
+
+            for(i =0;i<filteresImage.length;i++){
+                var li = document.createElement('li');
+                ul.appendChild(li);
+                li.innerHTML+="<img src =/image/"+filteresImage[i].filename+">";
+
+            }
+            $('#server_msg_modal').modal('show');
+
+        }
+
+
+
+
+    </script>
+</head>
+
+<body onload="drawVisualization();">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">Data Visualization</a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="confusion.html" >CNN</a></li>
+                <li><a href="scatterplot.html" onclick="selected('scatterplot')">Fisher</a></li> 
+                <li><a href="matrix.html" onclick="selected('matrix')">Decision Tree</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div id="mygraph"></div>
+    <div class="footer">
+        <h4> @Authors : Kesar TN, Pranav Bhasin, Abraham Jose</h4>
+    </div>
+    <div class="modal fade" id="server_msg_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title" id= "tits" style="margin: 0 auto;"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" id="modelbody">
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</body>
